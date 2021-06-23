@@ -168,3 +168,8 @@ The Amazon S3 website endpoints do not support HTTPS
 https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html  
 As a workaround, you have to use your own domain.  
 Please check out https://github.com/sagidM/s3-resizer/issues/7  
+
+## How to builde 
+rm -rf node_modules/
+npm i --only=prod --target=12.13.0
+zip s3-resizer_nodejs_12.13.0.zip node_modules/ index.js -rq

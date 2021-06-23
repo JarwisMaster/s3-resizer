@@ -58,7 +58,13 @@ exports.handler = async (event) => {
     };
   }
 
-  if (format && format !== "webp" && format !== "png" && format !== "jpeg" && format !== "jpg") {
+  if (
+    format &&
+    format !== "webp" &&
+    format !== "png" &&
+    format !== "jpeg" &&
+    format !== "avif"
+  ) {
     return {
       statusCode: 400,
       body: `Unknown format parameter "${format}"\n`,
@@ -91,10 +97,20 @@ exports.handler = async (event) => {
         break;
     }
 
-    const result = await Sharp(data.Body, { failOnError: false })
-      .resize(width, height, { withoutEnlargement: true, fit })
-      .rotate()
-      .toBuffer();
+    let result = null;
+
+    if (format) {
+      result = await Sharp(data.Body, { failOnError: false })
+        .resize(width, height, { withoutEnlargement: true, fit })
+        .rotate()
+        [format]()
+        .toBuffer();
+    } else {
+      result = await Sharp(data.Body, { failOnError: false })
+        .resize(width, height, { withoutEnlargement: true, fit })
+        .rotate()
+        .toBuffer();
+    }
 
     await S3.putObject({
       Body: result,
